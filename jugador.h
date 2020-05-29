@@ -2,8 +2,8 @@
 A01706702
 POO
 La clase jugador hereda a Guerrero y Arquero, por lo que es abstracta,
-nunca habrá un objeto tipo jugador,sino objetos tipo arquero y tipo Guerrero. ambas clases hijas tienen sus constructores, y como heredan todos los atributos de la padre, ese constructor debe hacer uso de ellos. El único método que se usa por ahora es el de mostrar id y username, y va en la clase padre porque siempre va a hacer la misma función sin importar el tipo de jugador. en cambio para el método usar_ataque() se emplea sobreescritura porque cambiará para cada tipo de jugador y de ahi depende el daño que haga el ataque elegido.
-en cada clase se utilizaronn dos constructores, para crear objetos que no requieran de todos lo atributos de la clase padre.
+nunca habrá un objeto tipo jugador,sino objetos tipo arquero y tipo Guerrero. ambas clases hijas tienen sus constructores, y como heredan todos los atributos de la padre, ese constructor debe hacer uso de ellos. Los únicos métodos que se usan por ahora sonn muestra_atributos y grito_de_guerra, y va en la clase padre porque siempre va a hacer la misma función sin importar el tipo de jugador. en cambio para el método usar_ataque() se emplea polimorfismo porque cambiará para cada tipo de jugador y de ahi depende el daño que haga el ataque elegido.
+en cada clase se utilizaronn constructores, y la funcion grito de guerra demuestra sobreescritura, usar_ataque aun no está lista y se implementará en próximas entregas.
 */
 
 #ifndef JUGADOR_H
@@ -21,19 +21,16 @@ protected: //porque de esta forma se pueden utilizar sin necesidad de sets y get
   int vida;
   int num_ataques;
 public:
-  Jugador(int,string);//constructor general
-  Jugador(int,string, int, int, int); //sobrecarga de constructor
-  void muestra_nombre_id();
-  void usar_ataque();
-  void cambiar_nombre(string nombre);
+  Jugador(int, string, int, int, int); //constructor
+  virtual void muestra_atributos(); //funcion virtual que
+  virtual void usar_ataque(int danio); //polimorfismo, pues un objeto de tipo de las clases hijas usará este metodo de manera diferente
+  //void cambiar_nombre(string nombre);
+  void grito_de_guerra();
+  //string to_string(int); para poder imprimir las id como string
+
 };
 
-//constructor desarrollo
-Jugador::Jugador(int _id, string _username){
-  id=_id;
-  username=_username;
-}
-//constructor 2 (sobrecarga)
+//constructor
 Jugador::Jugador(int _id, string _username, int _nivel, int _vida, int _num_ataques){
   id=_id;
   username=_username;
@@ -43,9 +40,20 @@ Jugador::Jugador(int _id, string _username, int _nivel, int _vida, int _num_ataq
 }
 
 //TODO: metodos desarrollo
-void Jugador::muestra_nombre_id(){
-  cout << "Username: " << username;
-  cout << " ID: " << id << endl;
+void Jugador::muestra_atributos(){
+  cout << "Username: " << username << "\n";
+  cout << "ID: " << id << "\n";
+  cout << "Nivel: " << nivel<< "\n";
+  cout << "Vida: " << vida << endl;
+}
+
+void Jugador::usar_ataque(int danio){
+    //Vida_zombie=Vida_zombie-danio;
+    num_ataques=num_ataques-1;
+}
+
+void Jugador::grito_de_guerra(){
+    cout<< "Hola!"<<endl;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -53,29 +61,30 @@ void Jugador::muestra_nombre_id(){
 //herencia Jugador a Guerrero
 class Guerrero : public Jugador{
 private:
-  int danioswing; //daño del swing de la espada
-  int daniospin; //danio del spin de la espada
+  int danioswing=20; //daño del swing de la espada
+  int daniospin=30; //danio del spin de la espada
 public:
     //constructor 1 con herencia de jugador
-    Guerrero(int _id, string _username, int _danioswing,
-    int _daniospin):Jugador(_id, _username){
-    danioswing = _danioswing;
-    daniospin = _daniospin;
-  }
-  //comstructor 2 con herencia de jugador
-  Guerrero(int _id, string _username, int _nivel, int _vida, int _num_ataques,
+    Guerrero(int _id, string _username, int _nivel, int _vida, int _num_ataques,
     int _danioswing, int _daniospin):Jugador(_id, _username, _nivel, _vida, _num_ataques){
     danioswing = _danioswing;
     daniospin = _daniospin;
   }
-  void usar_ataque();//sobreescritura
+    int get_danioswing(){return danioswing;};
+    void grito_de_guerra();
+    void muestra_atributos(); //polimorfismo
+    void usar_ataque();//polimorfismo
 };
-
-//TODO: sobreescritura desarrolladndo....
-void Guerrero::usar_ataque(){
-
+void Guerrero::muestra_atributos(){ //esta funcion polimorfica tiene propiedades difetentes a muestra_atributos de Jugador.
+    Jugador::muestra_atributos(); //sin embargo la manda a llamar para imprimir eso y además algo propio (polimorfismo)
+    cout << "Ataques: Swing, Spin" << endl;
 }
-
+void Guerrero::usar_ataque(){
+    Jugador::usar_ataque(danioswing);
+}
+void Guerrero::grito_de_guerra(){
+    cout<< "Por Narniaaaaaaaaa!!!!"<<endl;
+}
 ///////////////////////////////////////////////////////////////////////////////
 
 //herencia jugador a arquero
@@ -84,21 +93,25 @@ private:
   int danioflecha; //danio de felchazo normal
   int danioflechafuego; //danio de flechazo de fuego
 public:
-  Arquero(int _id, string _username, int _danioflecha, int _danioflechafuego):Jugador(_id, _username){
-    danioflecha = _danioflecha;
-    danioflechafuego = _danioflechafuego;
-  }
   Arquero(int _id, string _username, int _nivel, int _vida, int _num_ataques,
     int _danioflecha, int _danioflechafuego):Jugador(_id, _username, _nivel, _vida, _num_ataques){
     danioflecha = _danioflecha;
     danioflechafuego = _danioflechafuego;
   }
-  void usar_ataque();//sobreescritura
+  void grito_de_guerra();
+  void muestra_atributos();
+  void usar_ataque();//polimorfismo
 };
 
-//sobreescritura desarrolladndo....
+void Arquero::muestra_atributos(){
+    Jugador::muestra_atributos();
+    cout << "Ataques: Flecha, Flecha de Fuego" << endl;
+}
 void Arquero::usar_ataque(){
-
+    Jugador::usar_ataque(danioflecha);
 }
 
+void Arquero::grito_de_guerra(){
+    cout<< "Que lluevan flechas!!"<<endl;
+}
 #endif
