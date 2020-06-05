@@ -9,6 +9,7 @@ en cada clase se utilizaronn constructores, y la funcion grito de guerra demuest
 #ifndef JUGADOR_H
 #define JUGADOR_H
 #include <iostream>
+#include "zombie.h"
 using namespace std;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -21,15 +22,22 @@ protected: //porque de esta forma se pueden utilizar sin necesidad de sets y get
   int vida;
   int num_ataques;
 public:
-  Jugador(int, string, int, int, int); //constructor
-  virtual void muestra_atributos(); //funcion virtual que
-  virtual void usar_ataque(int danio); //polimorfismo, pues un objeto de tipo de las clases hijas usará este metodo de manera diferente
+  Jugador(); //constructor
+  Jugador(int _id, string _username, int _nivel, int _vida, int _num_ataques); //sobrecarga constructor
+  virtual void muestra_atributos(); //polimorfismo, pues un objeto de tipo de las clases hijas usará este metodo de manera diferente
   //void cambiar_nombre(string nombre);
+  virtual int usar_ataque(int) = 0;//funcion virtual pura (clase abstracta) será sobreescrita
   void grito_de_guerra();
-  //string to_string(int); para poder imprimir las id como string
 
 };
 
+Jugador::Jugador(){
+    id=0;
+    username="";
+    nivel=0;
+    vida=0;
+    num_ataques=0;
+}
 //constructor
 Jugador::Jugador(int _id, string _username, int _nivel, int _vida, int _num_ataques){
   id=_id;
@@ -47,11 +55,6 @@ void Jugador::muestra_atributos(){
   cout << "Vida: " << vida << endl;
 }
 
-void Jugador::usar_ataque(int danio){
-    //Vida_zombie=Vida_zombie-danio;
-    num_ataques=num_ataques-1;
-}
-
 void Jugador::grito_de_guerra(){
     cout<< "Hola!"<<endl;
 }
@@ -61,27 +64,44 @@ void Jugador::grito_de_guerra(){
 //herencia Jugador a Guerrero
 class Guerrero : public Jugador{
 private:
-  int danioswing=20; //daño del swing de la espada
-  int daniospin=30; //danio del spin de la espada
+  int danioswing; //daño del swing de la espada
+  int daniospin; //danio del spin de la espada
 public:
+    //Guerrero();
     //constructor 1 con herencia de jugador
     Guerrero(int _id, string _username, int _nivel, int _vida, int _num_ataques,
     int _danioswing, int _daniospin):Jugador(_id, _username, _nivel, _vida, _num_ataques){
     danioswing = _danioswing;
     daniospin = _daniospin;
   }
-    int get_danioswing(){return danioswing;};
     void grito_de_guerra();
     void muestra_atributos(); //polimorfismo
-    void usar_ataque();//polimorfismo
+    int usar_ataque(int);
 };
 void Guerrero::muestra_atributos(){ //esta funcion polimorfica tiene propiedades difetentes a muestra_atributos de Jugador.
     Jugador::muestra_atributos(); //sin embargo la manda a llamar para imprimir eso y además algo propio (polimorfismo)
-    cout << "Ataques: Swing, Spin" << endl;
+    cout << "Ataques:" << endl;
+    cout << "-Swing danio: "<< danioswing << endl;
+    cout << "-Spin danio: " << daniospin << endl;
 }
-void Guerrero::usar_ataque(){
-    Jugador::usar_ataque(danioswing);
+int Guerrero::usar_ataque(int dani){
+    if (dani==20){
+        dani=danioswing;
+    }
+    else if (dani==30){
+        dani=daniospin;
+    }
+    Zombie *zomb1 = new Zombie(100, 10);
+    int vidaZombie;
+    vidaZombie=(zomb1->get_vidaZombie())-dani;
+    cout << "vida zombie: " << vidaZombie<<endl;
+    cout << "SE USO EL ATAQUE!! \n";
+    return(vidaZombie);
+    //falta cambiar la vida anterior por la vida nueva
+    //num_ataques=num_ataques-1;
+    delete zomb1;
 }
+
 void Guerrero::grito_de_guerra(){
     cout<< "Por Narniaaaaaaaaa!!!!"<<endl;
 }
@@ -93,6 +113,7 @@ private:
   int danioflecha; //danio de felchazo normal
   int danioflechafuego; //danio de flechazo de fuego
 public:
+  //Arquero();
   Arquero(int _id, string _username, int _nivel, int _vida, int _num_ataques,
     int _danioflecha, int _danioflechafuego):Jugador(_id, _username, _nivel, _vida, _num_ataques){
     danioflecha = _danioflecha;
@@ -100,18 +121,33 @@ public:
   }
   void grito_de_guerra();
   void muestra_atributos();
-  void usar_ataque();//polimorfismo
+  int usar_ataque(int);//polimorfismo
 };
 
 void Arquero::muestra_atributos(){
     Jugador::muestra_atributos();
-    cout << "Ataques: Flecha, Flecha de Fuego" << endl;
+    cout << "Ataques:" << endl;
+    cout << "-Flecha (normal) danio: "<< danioflecha << endl;
+    cout << "-Flecha de Fuego danio: " << danioflechafuego << endl;
 }
-void Arquero::usar_ataque(){
-    Jugador::usar_ataque(danioflecha);
-}
+int Arquero::usar_ataque(int dani){
+    if (dani==15){
+        dani=danioflecha;
+    }
+    else if (dani==25){
+        dani=danioflechafuego;
+    }
+    Zombie *zomb2 = new Zombie(100, 10);
+    int vidaZombie;
+    vidaZombie=(zomb2->get_vidaZombie())-dani;
+    cout << "vida zombie: " << vidaZombie<<endl;
+    cout << "SE USO EL ATAQUE!! \n";
+    return(vidaZombie);
+    //num_ataques=num_ataques-1;
+    delete zomb2; }
 
 void Arquero::grito_de_guerra(){
     cout<< "Que lluevan flechas!!"<<endl;
 }
+
 #endif
