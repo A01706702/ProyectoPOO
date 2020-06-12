@@ -51,11 +51,23 @@ int main() {
     Jugador* jug1; //se declara un obj tipo jugador pero  no se instancia
     if (clase==1){
         jug1=new Guerrero(id, username, 1);//no es necesario pasarle todos los atributos pq ya tienen valor desde el constructor
-        zomb1->get_danioz();
+        /* //EJEMPLO OBJ TIPO GUERRERO
+        Guerrero* guerr1=new Guerrero(0001,"KRATOS",100);
+        cout<<"Guerrero Para demostrar sobreescritura:\n";
+        guerr1->grito_de_guerra();
+        cout<<"\n";
+        */
     }
     else if (clase==2){
         jug1=new Arquero(id, username, 1);
+        /* //EJEMPLO OBJ TIPO Arquero
+        Arquero* arq1=new Arquero(0002,"LEGOLAS",100);
+        cout<<"Arquero Para demostrar sobreescritura:\n";
+        arq1->grito_de_guerra();
+        cout<<"\n";
+        */
     }
+
     jug1->muestra_atributos(); // polimorfismo
     jug1->grito_de_guerra(); // no es virtual, no se sobreescribe.
     cout<< "\n";
